@@ -1,0 +1,64 @@
+<h1><%= @survey.title %></h1>
+<p><%= @survey.description %></p>
+
+<% if @questions.any? %>
+  <%= form_with(model: [@survey, @survey_response], local: true) do |form| %>
+    <% if @survey_response.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@survey_response.errors.count, "error") %> prohibited this survey from being submitted:</h4>
+        <ul>
+          <% @survey_response.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="mb-4">
+      <%= form.label :responder_email_address, "Your Email Address", class: "form-label" %>
+      <%= form.email_field :responder_email_address, class: "form-control", required: true %>
+    </div>
+
+    <div class="mb-4">
+      <%= form.label :feedback, "Overall Feedback (optional)", class: "form-label" %>
+      <%= form.text_area :feedback, rows: 3, class: "form-control" %>
+    </div>
+
+    <h3>Questions</h3>
+    <%= form.fields_for :answers do |answer_form| %>
+      <% question = answer_form.object.question %>
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">
+            <%= question.text %>
+            <% if question.required %>
+              <span class="badge bg-danger">Required</span>
+            <% end %>
+          </h5>
+
+          <%= answer_form.hidden_field :question_id %>
+
+          <div class="mb-3">
+            <%= answer_form.label :rating, "Rating (1-5)", class: "form-label" %>
+            <%= answer_form.select :rating, (1..5).to_a, { prompt: "Select rating" }, class: "form-control", required: question.required %>
+          </div>
+
+          <% if question.text_answer_optional %>
+            <div class="mb-3">
+              <%= answer_form.label :text, "Additional Comments (optional)", class: "form-label" %>
+              <%= answer_form.text_area :text, rows: 3, class: "form-control" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="mb-3">
+      <%= form.submit "Submit Survey", class: "btn btn-success btn-lg" %>
+      <%= link_to "Cancel", surveys_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+<% else %>
+  <p class="text-muted">This survey has no questions yet.</p>
+  <%= link_to "Back to Surveys", surveys_path, class: "btn btn-secondary mt-3" %>
+<% end %>

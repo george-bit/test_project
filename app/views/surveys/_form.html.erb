@@ -1,0 +1,48 @@
+<%= form_with(model: survey, local: true) do |form| %>
+  <% if survey.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(survey.errors.count, "error") %> prohibited this survey from being saved:</h4>
+      <ul>
+        <% survey.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, class: "form-label" %>
+    <%= form.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, class: "form-label" %>
+    <%= form.text_area :description, rows: 4, class: "form-control" %>
+  </div>
+
+  <% if survey.persisted? %>
+    <div class="mb-4">
+      <h3>Questions (<%= survey.questions.count %>)</h3>
+      <% if survey.questions.any? %>
+        <ul class="list-group mb-3">
+          <% survey.questions.each do |question| %>
+            <li class="list-group-item">
+              <strong>Text:</strong> <%= question.text %> |
+              <strong>Required:</strong> <%= question.required ? "Yes" : "No" %> |
+              <strong>Text Answer Optional:</strong> <%= question.text_answer_optional ? "Yes" : "No" %> |
+              <%= link_to "Edit", edit_survey_question_path(survey, question), class: "btn btn-sm btn-primary" %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-muted">No questions yet.</p>
+      <% end %>
+      <%= link_to "Add Question", new_survey_question_path(survey), class: "btn btn-success btn-sm" %>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", surveys_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>

@@ -1,0 +1,36 @@
+<%= form_with(model: [question.survey, question], local: true) do |form| %>
+  <% if question.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(question.errors.count, "error") %> prohibited this question from being saved:</h4>
+      <ul>
+        <% question.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :text, "Question Text", class: "form-label" %>
+    <%= form.text_area :text, rows: 3, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <div class="form-check">
+      <%= form.check_box :required, class: "form-check-input" %>
+      <%= form.label :required, "Question is required", class: "form-check-label" %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="form-check">
+      <%= form.check_box :text_answer_optional, class: "form-check-input" %>
+      <%= form.label :text_answer_optional, "Text answer is optional", class: "form-check-label" %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", edit_survey_path(question.survey), class: "btn btn-secondary" %>
+  </div>
+<% end %>
